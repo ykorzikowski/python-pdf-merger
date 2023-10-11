@@ -11,7 +11,7 @@ async def merge_pdfs(file1: UploadFile = None, file2: UploadFile = None):
         raise HTTPException(status_code=400, detail="Both files are required")
 
     # Create a PDF merger
-    merger = PyPDF2.PdfFileMerger()
+    merger = PyPDF2.PdfMerger()
     
     try:
         # Read the content of the uploaded files
