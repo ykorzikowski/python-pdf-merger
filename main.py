@@ -38,13 +38,9 @@ async def merge_pdfs(file1: Annotated[bytes, File()] = None, file2: Annotated[by
         raise HTTPException(status_code=400, detail="Both files are required")
 
     try:
-        # Read the content of the uploaded files
-        file1_content = await file1.read()
-        file2_content = await file2.read()
-
         # Convert content to byte streams
-        file1_stream = BytesIO(file1_content)
-        file2_stream = BytesIO(file2_content)
+        file1_stream = BytesIO(file1)
+        file2_stream = BytesIO(file2)
 
         # Write output to a byte stream
         output_stream = do_pdf_merge(file1_stream, file2_stream)
