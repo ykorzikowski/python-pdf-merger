@@ -5,6 +5,16 @@ name: build-dev
 
 steps:
 
+  - name: run-tests
+    image: harbor.swokiz.dev/hub-proxy/library/python:3.11-bookworm
+    depends_on: [ clone ]
+    environment:
+      PLUGIN_CONFIG:
+        from_secret: image-swokiz-dev-json
+    commands:
+      - python3 -m pip install -r requirements.txt
+      - python3 test.py
+
   - name: kaninko-build-dev
     image: harbor.swokiz.dev/hub-proxy/plugins/kaniko
     depends_on: [ clone ]
