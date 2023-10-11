@@ -1,6 +1,8 @@
-from fastapi import FastAPI, UploadFile, HTTPException
-from fastapi.responses import Response
+from fastapi import FastAPI, UploadFile, HTTPException, Request, status
+from fastapi.responses import Response, JSONResponse
+from fastapi.exceptions import RequestValidationError
 import PyPDF2
+import logging
 from io import BytesIO
 
 app = FastAPI()
@@ -22,6 +24,12 @@ def do_pdf_merge(file1: BytesIO, file2: BytesIO) -> BytesIO:
     
     return output_stream
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+	logging.error(f"{request}: {exc_str}")
+	content = {'status_code': 10422, 'message': exc_str, 'data': None}
+	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @app.post("/merge/")
 async def merge_pdfs(file1: UploadFile = None, file2: UploadFile = None):
