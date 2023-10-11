@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, HTTPException, Request, status
 from fastapi.responses import Response, JSONResponse
 from fastapi.exceptions import RequestValidationError
+from typing import Annotated
 import PyPDF2
 import logging
 from io import BytesIO
@@ -32,7 +33,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 @app.post("/merge/")
-async def merge_pdfs(file1: File = None, file2: File = None):
+async def merge_pdfs(file1: Annotated[bytes, File()] = None, file2: Annotated[bytes, File()] = None):
     if not file1 or not file2:
         raise HTTPException(status_code=400, detail="Both files are required")
 
