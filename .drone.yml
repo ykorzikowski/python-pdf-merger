@@ -1,0 +1,53 @@
+---
+type: docker
+kind: pipeline
+name: build-dev
+
+steps:
+
+  - name: kaninko-build-dev
+    image: harbor.swokiz.dev/hub-proxy/plugins/kaniko
+    depends_on: [ clone ]
+    environment:
+      PLUGIN_CONFIG:
+        from_secret: image-swokiz-dev-json
+    settings:
+      repo: "harbor.swokiz.dev/swokiz/tool-python-pdf-merger"
+      registry: harbor.swokiz.dev
+      dockerfile: Dockerfile
+      tags:
+        - dev
+
+image_pull_secrets:
+  - image-swokiz-dev-json
+
+---
+
+type: docker
+kind: pipeline
+name: on-tagged-commit
+
+steps:
+
+  - name: kaninko-build-prod
+    image: harbor.swokiz.dev/hub-proxy/plugins/kaniko
+    depends_on: [ clone ]
+    environment:
+      PLUGIN_CONFIG:
+        from_secret: image-swokiz-dev-json
+      SEAFILE_VERSION: 10.0.1
+    settings:
+      repo: "harbor.swokiz.dev/swokiz/tool-python-pdf-merger"
+      registry: harbor.swokiz.dev
+      dockerfile: Dockerfile
+      tags:
+        - ${DRONE_TAG}
+      build_args:
+        - SEAFILE_VERSION
+
+image_pull_secrets:
+  - image-swokiz-dev-json
+
+trigger:
+  event:
+  - tag
