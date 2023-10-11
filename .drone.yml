@@ -35,15 +35,13 @@ steps:
     environment:
       PLUGIN_CONFIG:
         from_secret: image-swokiz-dev-json
-      SEAFILE_VERSION: 10.0.1
     settings:
       repo: "harbor.swokiz.dev/swokiz/tool-python-pdf-merger"
       registry: harbor.swokiz.dev
       dockerfile: Dockerfile
       tags:
         - ${DRONE_TAG}
-      build_args:
-        - SEAFILE_VERSION
+        - latest
 
 image_pull_secrets:
   - image-swokiz-dev-json
